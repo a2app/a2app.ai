@@ -106,7 +106,7 @@ nav .container {
   display:flex; align-items:center; justify-content:center;
   font-weight:700; font-size:0.85rem; color:var(--bg);
 }
-.nav-links { display:flex; align-items:center; gap:32px; }
+.nav-links { display:flex; align-items:center; justify-content:flex-end; gap:20px; flex-wrap:nowrap; }
 .nav-links a {
   color:var(--text-muted); text-decoration:none; font-size:0.9rem;
   font-weight:500; transition:color 0.2s;
@@ -117,6 +117,7 @@ nav .container {
   background:var(--accent); color:var(--bg);
   font-weight:600; font-size:0.85rem;
   text-decoration:none; transition:all 0.2s;
+  margin-left:8px;
 }
 .nav-cta:hover { background:var(--accent-glow); transform:translateY(-1px); }
 
@@ -792,6 +793,11 @@ footer {
 }
 
 /* ─── Responsive ─── */
+/* Nav collapses to burger earlier than the rest of the layout — 10+ links don't fit comfortably on mid-size laptops. */
+@media (max-width:1100px) {
+  .nav-links { display:none; }
+  .mobile-menu { display:block; }
+}
 @media (max-width:900px) {
   .flow-grid, .features-grid, .protocol-block { grid-template-columns:1fr; }
   .usecases-grid { grid-template-columns:1fr; }
@@ -800,8 +806,6 @@ footer {
   .device-desktop { width:100%; max-width:420px; }
   .device-tablet { width:100%; max-width:260px; }
   .device-phone { width:100%; max-width:150px; }
-  .nav-links { display:none; }
-  .mobile-menu { display:block; }
   .aosf-layers-grid { grid-template-columns:1fr; }
   .factory-steps { grid-template-columns:repeat(2,1fr); }
 }
