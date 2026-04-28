@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>A2App — Agent to App</title>
+<!-- Favicons -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#07080A">
+<meta name="apple-mobile-web-app-title" content="A2App">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -795,8 +804,49 @@ footer {
 /* ─── Responsive ─── */
 /* Nav collapses to burger earlier than the rest of the layout — 10+ links don't fit comfortably on mid-size laptops. */
 @media (max-width:1100px) {
-  .nav-links { display:none; }
-  .mobile-menu { display:block; }
+  .nav-links {
+    display:flex;
+    position:absolute;
+    top:100%;
+    left:0;
+    right:0;
+    flex-direction:column;
+    align-items:stretch;
+    justify-content:flex-start;
+    gap:0;
+    background: rgba(7,8,10,0.96);
+    backdrop-filter: blur(20px);
+    border-bottom:1px solid var(--border);
+    padding:8px 0;
+    max-height:calc(100vh - 70px);
+    overflow-y:auto;
+    /* Closed state — animated */
+    opacity:0;
+    transform:translateY(-8px);
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity 0.25s ease, transform 0.25s ease, visibility 0s linear 0.25s;
+  }
+  .nav-links.open {
+    opacity:1;
+    transform:translateY(0);
+    visibility:visible;
+    pointer-events:auto;
+    transition:opacity 0.25s ease, transform 0.25s ease, visibility 0s linear 0s;
+  }
+  .nav-links a {
+    padding:14px 24px;
+    font-size:0.95rem;
+    border-bottom:1px solid var(--border);
+  }
+  .nav-links a:last-child { border-bottom:none; }
+  .nav-cta {
+    margin:10px 24px 4px;
+    padding:12px 20px;
+    text-align:center;
+    border-bottom:none !important;
+  }
+  .mobile-menu { display:block; font-size:1.4rem; padding:4px 8px; }
 }
 @media (max-width:900px) {
   .flow-grid, .features-grid, .protocol-block { grid-template-columns:1fr; }
@@ -840,9 +890,9 @@ footer {
       <a href="#factory">Factory</a>
       <a href="#vision">Why Now</a>
       <a href="#trust">Trust</a>
-      <a href="https://makepad.dev" target="_blank" class="nav-cta">Makepad 2.0 →</a>
+      <a href="https://makepad.nl" target="_blank" class="nav-cta">Makepad 2.0 →</a>
     </div>
-    <button class="mobile-menu" onclick="document.querySelector('.nav-links').style.display=document.querySelector('.nav-links').style.display==='flex'?'none':'flex'">☰</button>
+    <button class="mobile-menu" aria-label="Toggle menu" aria-expanded="false" onclick="(function(b){var n=document.querySelector('.nav-links');var open=n.classList.toggle('open');b.setAttribute('aria-expanded',open);b.textContent=open?'✕':'☰';})(this)">☰</button>
   </div>
 </nav>
 
@@ -1228,7 +1278,7 @@ footer {
     <p class="section-desc fade-up delay-2">Projects bringing A2App's ideas to life — from Makepad 2.0 native apps to prompt-injection-resistant agent runtimes.</p>
 
     <div class="showcase-grid fade-up delay-3">
-      <a href="https://github.com/project-robius/robrix" target="_blank" class="showcase-card">
+      <a href="https://robius.app" target="_blank" class="showcase-card">
         <div class="showcase-image">
           <img src="https://raw.githubusercontent.com/project-robius/robrix/main/resources/icon_256.png" alt="Robrix app icon" />
         </div>
@@ -1343,7 +1393,7 @@ footer {
     <h2 class="section-title fade-up delay-1" style="max-width:600px;">Ready to turn agents into apps?</h2>
     <p class="section-desc fade-up delay-2" style="max-width:500px;">Start building with Makepad 2.0, inspired by A2UI concepts. Open source, Rust-native, and production-ready.</p>
     <div class="hero-actions fade-up delay-3">
-      <a href="https://makepad.dev" target="_blank" class="btn-primary">Start Building →</a>
+      <a href="https://makepad.nl" target="_blank" class="btn-primary">Start Building →</a>
     </div>
   </div>
 </section>
@@ -1354,7 +1404,7 @@ footer {
     <div class="footer-inner">
       <p>A2App — Inspired by A2UI · Built with Makepad 2.0</p>
       <div class="footer-links">
-        <a href="https://makepad.dev" target="_blank">Makepad</a>
+        <a href="https://makepad.nl" target="_blank">Makepad</a>
         <a href="https://a2ui.org" target="_blank">A2UI.org</a>
         <a href="#showcase">Showcase</a>
         <a href="https://a2ui.org/ecosystem/community/" target="_blank">Community</a>
@@ -1381,6 +1431,35 @@ const observer = new IntersectionObserver((entries) => {
 document.querySelectorAll('.fade-up').forEach(el => {
   el.style.animationPlayState = 'paused';
   observer.observe(el);
+});
+
+// Mobile menu helpers
+function closeMobileMenu() {
+  const n = document.querySelector('.nav-links');
+  const b = document.querySelector('.mobile-menu');
+  if (n && n.classList.contains('open')) {
+    n.classList.remove('open');
+    if (b) { b.setAttribute('aria-expanded', 'false'); b.textContent = '☰'; }
+  }
+}
+
+// Close when a link is tapped
+document.querySelectorAll('.nav-links a').forEach(a => {
+  a.addEventListener('click', closeMobileMenu);
+});
+
+// Close when tapping outside the menu/button
+document.addEventListener('click', (e) => {
+  const n = document.querySelector('.nav-links');
+  const b = document.querySelector('.mobile-menu');
+  if (!n || !n.classList.contains('open')) return;
+  if (n.contains(e.target) || (b && b.contains(e.target))) return;
+  closeMobileMenu();
+});
+
+// Close on Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeMobileMenu();
 });
 </script>
 
